@@ -346,7 +346,7 @@ footer{background:var(--bg-1);border-top:1px solid var(--border);padding:3rem 0}
         <div class="term-dot" style="background:#ffbd2e"></div>
         <div class="term-dot" style="background:#27c93f"></div>
         <span style="flex:1"></span>
-        <span>jss@devops ~ zsh</span>
+        <span>jss&#64;devops ~ zsh</span>
       </div>
       <div class="term-body" id="term-body">
         <span class="term-cursor" id="term-cursor"></span>
@@ -530,20 +530,17 @@ footer{background:var(--bg-1);border-top:1px solid var(--border);padding:3rem 0}
       </a>
     </div>
     <div class="project-card">
-      <span class="project-badge badge-wip">
-        <span class="lang-pt">em construção</span>
-        <span class="lang-en">in progress</span>
-      </span>
+      <span class="project-badge badge-live">LIVE</span>
       <div class="project-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
       <div class="project-name">eks-gitops-platform</div>
       <div class="project-desc">
-        <span class="lang-pt">Plataforma GitOps production-grade na AWS com EKS, ArgoCD, Kustomize multi-ambiente (dev/staging/prod), RBAC, Network Policies, External Secrets Operator e kube-prometheus-stack.</span>
-        <span class="lang-en">Production-grade GitOps platform on AWS with EKS, ArgoCD, Kustomize multi-environment (dev/staging/prod), RBAC, Network Policies, External Secrets Operator and kube-prometheus-stack.</span>
+        <span class="lang-pt">Plataforma GitOps production-grade: <strong>do <code>git push</code> ao pod em produção sem toque manual</strong>. 3 ambientes isolados (dev/staging/prod) com VPCs distintas, ArgoCD App of Apps, Kustomize overlays, OIDC sem access keys, Network Policies Zero Trust, External Secrets Operator + KMS, 20 alertas Prometheus e setup local completo em 5 minutos.</span>
+        <span class="lang-en">Production-grade GitOps platform: <strong>from <code>git push</code> to pod in production with no manual touch</strong>. 3 isolated environments (dev/staging/prod) with separate VPCs, ArgoCD App of Apps, Kustomize overlays, OIDC without static keys, Zero Trust Network Policies, External Secrets Operator + KMS, 20 Prometheus alerts and full local setup in 5 minutes.</span>
       </div>
       <div class="project-stack">
-        <span class="proj-tag">EKS</span><span class="proj-tag">ArgoCD</span><span class="proj-tag">Terraform</span><span class="proj-tag">Kustomize</span><span class="proj-tag">GitHub Actions</span><span class="proj-tag">Prometheus</span>
+        <span class="proj-tag">EKS 1.29</span><span class="proj-tag">ArgoCD v3</span><span class="proj-tag">Terraform</span><span class="proj-tag">Kustomize</span><span class="proj-tag">GitHub Actions OIDC</span><span class="proj-tag">Prometheus</span><span class="proj-tag">Grafana</span><span class="proj-tag">External Secrets</span>
       </div>
       <a href="https://github.com/J0wSSilva/eks-gitops-platform" target="_blank" class="project-link">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg>
@@ -857,7 +854,7 @@ function setLang(l){
   html.setAttribute('data-lang', l);
   localStorage.setItem('jss-lang', l);
   langBtn.textContent = l==='pt' ? 'EN' : 'PT';
-  document.getElementById('email').placeholder = l==='pt' ? 'seu@email.com' : 'your@email.com';
+  document.getElementById('email').placeholder = l==='pt' ? 'seu' + '@' + 'email.com' : 'your' + '@' + 'email.com';
   document.getElementById('name').placeholder  = l==='pt' ? 'Seu nome' : 'Your name';
   document.getElementById('msg').placeholder   = l==='pt' ? 'Olá Jonathan...' : 'Hello Jonathan...';
 }
@@ -968,16 +965,16 @@ const sequence = [
 ];
 let lineIdx = 0, charIdx = 0, isTyping = true, lineEl = null;
 function tick(){
-  if(lineIdx >= sequence.length){ lineIdx = 0; termBody.innerHTML = ''; termBody.appendChild(termCursor); }
+  if(lineIdx >= sequence.length){
+    lineIdx = 0;
+    // remove all term-line elements but keep cursor
+    termBody.querySelectorAll('.term-line').forEach(el => el.remove());
+  }
   const item = sequence[lineIdx];
   if(!lineEl){
     lineEl = document.createElement('div');
     lineEl.className = 'term-line ' + item.type;
-    if(termCursor.parentNode === termBody){
-      termBody.insertBefore(lineEl, termCursor);
-    } else {
-      termBody.appendChild(lineEl);
-    }
+    termBody.appendChild(lineEl);
   }
   if(charIdx < item.text.length){
     lineEl.textContent += item.text[charIdx++];
